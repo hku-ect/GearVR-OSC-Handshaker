@@ -11,6 +11,16 @@ static const char* GearIPs[] =
     "10.200.200.23",     //gear 5   //TEST IP (one of the laptops/desktops)
 };
 
+static const char* GearNames[] =
+{
+    "Yellow",           //gear 0
+    "Blue",             //gear 1
+    "Orange",           //gear 2
+    "Purple",           //gear 3
+    "Pink",             //gear 4
+    "Yellow",           //TEST IP (one of the laptops/desktops)
+};
+
 static const int NUM_GEARS = 6;
 //end Hardcoded Gear Setup
 
@@ -86,7 +96,7 @@ void ofApp::update(){
                     //ofLogError("Successfully handshaked with %s", remoteIP );
                     doError("Successfully handshaked with ", remoteIP );
                     m.setAddress("/gear-handshake-reply");
-                    m.addIntArg(i);
+                    m.addStringArg(GearNames[i]);
                     
                     oscSender->setup(remoteIP, 6505);
                     oscSender->sendMessage(m);
