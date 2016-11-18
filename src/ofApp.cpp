@@ -9,6 +9,8 @@ static const char* GearIPs[] =
     "10.200.200.193",    //gear 3
     "10.200.200.68",     //gear 4
     "10.200.200.23",     //gear 5   //TEST IP (one of the laptops/desktops)
+    "10.200.200.194",       //wiebe
+    "10.200.200.25",        //machiel
 };
 
 static const char* GearNames[] =
@@ -19,9 +21,11 @@ static const char* GearNames[] =
     "Purple",           //gear 3
     "Pink",             //gear 4
     "Yellow",           //TEST IP (one of the laptops/desktops)
+    "Yellow",           //Wiebe
+    "Machiel",
 };
 
-static const int NUM_GEARS = 6;
+static const int NUM_GEARS = 8;
 //end Hardcoded Gear Setup
 
 const int MAX_ERRORS = 10;
