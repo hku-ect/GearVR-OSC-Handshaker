@@ -65,7 +65,7 @@ void ofApp::setup(){
     
     oscSender = new ofxOscSender();
     
-    ofSetFrameRate(60);
+    ofSetFrameRate(240);
     ofSetWindowShape(600, 200);
     ofBackground(0,0,0);
     
