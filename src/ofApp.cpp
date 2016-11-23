@@ -11,6 +11,7 @@ static const char* GearIPs[] =
     "10.200.200.23",     //gear 5   //TEST IP (one of the laptops/desktops)
     "10.200.200.194",       //wiebe
     "10.200.200.25",        //machiel
+    "10.200.200.69",        //valentijn
 };
 
 static const char* GearNames[] =
@@ -23,9 +24,10 @@ static const char* GearNames[] =
     "Yellow",           //TEST IP (one of the laptops/desktops)
     "Yellow",           //Wiebe
     "Machiel",
+    "Yellow",           //Valentijn
 };
 
-static const int NUM_GEARS = 8;
+static const int NUM_GEARS = 9;
 //end Hardcoded Gear Setup
 
 const int MAX_ERRORS = 10;
@@ -98,7 +100,7 @@ void ofApp::update(){
                 {
                     ofxOscMessage m;
                     //ofLogError("Successfully handshaked with %s", remoteIP );
-                    doError("Successfully handshaked with ", remoteIP );
+                    doError("Successfully handshaked with ", GearNames[i] );
                     m.setAddress("/gear-handshake-reply");
                     m.addStringArg(GearNames[i]);
                     
@@ -116,6 +118,19 @@ void ofApp::update(){
                     m.addIntArg(0);
                     oscSender->setup(remoteIP, 6505);
                     oscSender->sendMessage(m);
+                }
+            }
+        }
+        else if ( msg.getAddress() == "/gear-virtualpos" )
+        {
+            string remoteIP = msg.getRemoteIp();
+            for( int i = 0; i < NUM_GEARS; ++i )
+            {
+                //doError("Got & sent virual pos: ", remoteIP );
+                if ( remoteIP != GearIPs[i] )
+                {
+                    oscSender->setup(GearIPs[i], 6200);
+                    oscSender->sendMessage(msg);
                 }
             }
         }
