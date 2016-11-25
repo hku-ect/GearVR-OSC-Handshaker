@@ -24,7 +24,7 @@ static const char* GearNames[] =
     "Pink",             //gear 4
     "Yellow",           //Aaron's Laptop
     "Yellow",           //Wiebe's Laptop
-    "Machiel",          //Machiel's Laptop
+    "Yellow",           //Machiel's Laptop
     "Yellow",           //Valentijn's Laptop
     "Yellow",           //Handshaker
 };
