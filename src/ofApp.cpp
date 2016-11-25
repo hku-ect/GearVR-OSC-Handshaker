@@ -22,14 +22,14 @@ static const char* GearNames[] =
     "Orange",           //gear 2
     "Purple",           //gear 3
     "Pink",             //gear 4
-    "Yellow",           //Aaron's Laptop
-    "Yellow",           //Wiebe's Laptop
-    "Yellow",           //Machiel's Laptop
+    "Orange",           //Aaron's Laptop
+    "Blue",           //Wiebe's Laptop
+    "Purple",           //Machiel's Laptop
     "Yellow",           //Valentijn's Laptop
-    "Yellow",           //Handshaker
+    "Purple",           //Handshaker
 };
 
-static const int NUM_GEARS = 9;
+static const int NUM_GEARS = 10;
 //end Hardcoded Gear Setup
 
 const int MAX_ERRORS = 10;
