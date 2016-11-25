@@ -9,9 +9,10 @@ static const char* GearIPs[] =
     "10.200.200.193",    //gear 3
     "10.200.200.68",     //gear 4
     "10.200.200.23",     //gear 5   //TEST IP (one of the laptops/desktops)
-    "10.200.200.194",       //wiebe
-    "10.200.200.25",        //machiel
-    "10.200.200.69",        //valentijn
+    "10.200.200.194",    //wiebe
+    "10.200.200.16",     //machiel
+    "10.200.200.69",     //valentijn
+    "10.200.200.67",     //handshaker
 };
 
 static const char* GearNames[] =
@@ -21,10 +22,11 @@ static const char* GearNames[] =
     "Orange",           //gear 2
     "Purple",           //gear 3
     "Pink",             //gear 4
-    "Yellow",           //TEST IP (one of the laptops/desktops)
-    "Yellow",           //Wiebe
-    "Machiel",
-    "Yellow",           //Valentijn
+    "Yellow",           //Aaron's Laptop
+    "Yellow",           //Wiebe's Laptop
+    "Machiel",          //Machiel's Laptop
+    "Yellow",           //Valentijn's Laptop
+    "Yellow",           //Handshaker
 };
 
 static const int NUM_GEARS = 9;
