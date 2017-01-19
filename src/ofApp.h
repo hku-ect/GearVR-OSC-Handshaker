@@ -2,6 +2,10 @@
 
 #include "ofMain.h"
 #include "ofxOsc.h"
+#include "client.h"
+#include "ofxTextInputField.h"
+#include "ofxTextButton.h"
+#include "ofxXmlSettings.h"
 
 class ofApp : public ofBaseApp{
 
@@ -9,6 +13,7 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+        void exit();
 
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -24,9 +29,26 @@ class ofApp : public ofBaseApp{
     
         ~ofApp();
     
-    private:
-        ofxOscReceiver  *oscReceiver;
-        ofxOscSender    *oscSender;
+        std::vector<Client*> clients;
     
-        ofTrueTypeFont	verdana14;
+    private:
+        ofxOscReceiver      *oscReceiver;
+        ofxOscSender        *oscSender;
+    
+        ofTrueTypeFont      verdana14;
+    
+        ofxTextInputField   newName;
+        ofxTextInputField   newIP;
+    
+        ofxTextButton       addButton;
+        ofxTextButton       saveButton;
+    
+        void                setupInputFields();
+        void                deactivateInputs();
+    
+        void                addClient(string name, string ip);
+        void                deleteClient(int &index);
+    
+        void                saveData();
+        void                loadData();
 };

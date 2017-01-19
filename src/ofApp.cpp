@@ -1,37 +1,5 @@
 #include "ofApp.h"
 
-//Hardcoded Gear Setup
-static const char* GearIPs[] =
-{
-    "10.200.200.189",    //gear 0
-    "10.200.200.190",    //gear 1
-    "10.200.200.192",    //gear 2
-    "10.200.200.193",    //gear 3
-    "10.200.200.68",     //gear 4
-    "10.200.200.23",     //gear 5   //TEST IP (one of the laptops/desktops)
-    "10.200.200.194",    //wiebe
-    "10.200.200.16",     //machiel
-    "10.200.200.69",     //valentijn
-    "10.200.200.67",     //handshaker
-};
-
-static const char* GearNames[] =
-{
-    "Yellow",           //gear 0
-    "Blue",             //gear 1
-    "Orange",           //gear 2
-    "Purple",           //gear 3
-    "Pink",             //gear 4
-    "Orange",           //Aaron's Laptop
-    "Blue",           //Wiebe's Laptop
-    "Purple",           //Machiel's Laptop
-    "Yellow",           //Valentijn's Laptop
-    "Purple",           //Handshaker
-};
-
-static const int NUM_GEARS = 10;
-//end Hardcoded Gear Setup
-
 const int MAX_ERRORS = 10;
 static string* errorLog = new string[MAX_ERRORS];
 static int currentError = 0;
@@ -68,7 +36,7 @@ void ofApp::setup(){
     oscSender = new ofxOscSender();
     
     ofSetFrameRate(240);
-    ofSetWindowShape(600, 200);
+    ofSetWindowShape(700, 200);
     ofBackground(0,0,0);
     
     ofTrueTypeFont::setGlobalDpi(72);
@@ -77,12 +45,32 @@ void ofApp::setup(){
     verdana14.setLineHeight(18.0f);
     verdana14.setLetterSpacing(1.037);
     
+    setupInputFields();
+    loadData();
+    
     doError("Running...");
 }
 
 ofApp::~ofApp() {
     delete oscReceiver;
     delete oscSender;
+}
+
+
+void ofApp::setupInputFields() {
+    //interface to add clients
+    newName.setup(ofRectangle(380, 30, 120, 24 ), 12, "Name", "Motive Rigidbody Name");
+    newIP.setup(ofRectangle(380,60,120,24), 12, "127.0.0.1", "Client IP" );
+    
+    addButton.setup(ofRectangle(380,100,120,30), "Add", 12, ofColor(255,255,255), ofColor(50,50,50));
+    saveButton.setup(ofRectangle(380,160,120,30), "Save", 12, ofColor(255,255,255), ofColor(50,50,50));
+}
+
+void ofApp::deactivateInputs()
+{
+    //deactivate all inputfields
+    newName.deactivate();
+    newIP.deactivate();
 }
 
 //--------------------------------------------------------------
@@ -94,24 +82,22 @@ void ofApp::update(){
         if ( msg.getAddress() == "/gear-handshake" )
         {
             string remoteIP = msg.getRemoteIp();
-            //ofLogError("Handshake request from %s", remoteIP );
-            doError("Handshake request from ", remoteIP );
-            for( int i = 0; i < NUM_GEARS; ++i )
+            doError("Handshake request from: ", remoteIP );
+            for( int i = 0; i < clients.size(); ++i )
             {
-                if ( remoteIP == GearIPs[i] )
+                if ( remoteIP == clients[i]->getIP() )
                 {
                     ofxOscMessage m;
-                    //ofLogError("Successfully handshaked with %s", remoteIP );
-                    doError("Successfully handshaked with ", GearNames[i] );
                     m.setAddress("/gear-handshake-reply");
-                    m.addStringArg(GearNames[i]);
+                    m.addStringArg(clients[i]->getName());
+                    doError("Successfully handshaked as: ", clients[i]->getName() );
                     
                     oscSender->setup(remoteIP, 6505);
                     oscSender->sendMessage(m);
                     break;
                 }
                 
-                if ( i == NUM_GEARS - 1 )
+                if ( i == clients.size() - 1 )
                 {
                     //ofLogError("Did not find Gear IP in list: %s", remoteIP );
                     doError("Did not find Gear IP in list: ", remoteIP );
@@ -126,17 +112,29 @@ void ofApp::update(){
         else if ( msg.getAddress() == "/gear-virtualpos" )
         {
             string remoteIP = msg.getRemoteIp();
-            for( int i = 0; i < NUM_GEARS; ++i )
+            for( int i = 0; i < clients.size(); ++i )
             {
                 //doError("Got & sent virual pos: ", remoteIP );
-                if ( remoteIP != GearIPs[i] )
+                if ( remoteIP != clients[i]->getIP() )
                 {
-                    oscSender->setup(GearIPs[i], 6200);
+                    oscSender->setup(clients[i]->getIP(), 6200);
                     oscSender->sendMessage(msg);
                 }
             }
         }
     }
+}
+
+void ofApp::addClient( string name, string ip ) {
+    Client *c = new Client(name,ip);
+    ofAddListener(c->deleteClient, this, &ofApp::deleteClient);
+    clients.push_back(c);
+}
+
+void ofApp::deleteClient(int &index) {
+    ofRemoveListener(clients[index]->deleteClient, this, &ofApp::deleteClient);
+    delete clients[index];
+    clients.erase(clients.begin() + index);
 }
 
 //--------------------------------------------------------------
@@ -145,15 +143,35 @@ void ofApp::draw(){
     int count = 0;
     while ( s != NULL && count < MAX_ERRORS )
     {
-        verdana14.drawString(*s, 2, count * 18 + 14);
+        ofSetColor(255,127,0);
+        verdana14.drawString(*s, 2, clients.size() * CLIENT_YSIZE + CLIENT_Y + 2 + count * 18 );
         s++;
         count++;
+    }
+    
+    ofSetColor(0,200,0);
+    verdana14.drawString("New Client", 380, 20 );
+    
+    newName.draw();
+    newIP.draw();
+    addButton.draw();
+    saveButton.draw();
+    
+    for( int i = 0; i < clients.size(); ++i ) {
+        clients[i]->draw(CLIENT_X, i * CLIENT_YSIZE + CLIENT_Y);
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    if (newIP.getState()) {
+        newIP.addKey(key);
+        return;
+    }
+    if (newName.getState()) {
+        newName.addKey(key);
+        return;
+    }
 }
 
 //--------------------------------------------------------------
@@ -173,7 +191,57 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
+    deactivateInputs();
+    
+    //clients
+    for (int i = 0; i < clients.size(); i++)
+    {
+        if ( clients[i]->inside(x - CLIENT_X, y - ( CLIENT_Y + CLIENT_YSIZE * i ), i ) ) {
+            return;
+        }
+    }
+    
+    //input fields
+    if(newName.isInside(x, y)) return;
+    if(newIP.isInside(x, y)) return;
+    
+    //add/save button
+    if(addButton.isInside(x, y)) {
+        addClient( newName.getText(), newIP.getText() );
+        return;
+    }
+    if(saveButton.isInside(x, y)) saveData();
+}
 
+void ofApp::saveData() {
+    ofxXmlSettings save;
+    save.addTag("setup");
+    save.pushTag("setup", 0);
+    save.popTag();
+    for (int i = 0; i < clients.size(); i++) {
+        save.addTag("client");
+        save.pushTag("client",i);
+        save.addValue("ip", clients[i]->getIP());
+        save.addValue("objectName", clients[i]->getName());
+        save.popTag();
+    }
+    save.save("setup.xml");
+}
+
+void ofApp::loadData() {
+    ofxXmlSettings data("setup.xml");
+    data.pushTag("setup",0);
+    data.popTag();
+    
+    int numClients = data.getNumTags("client");
+    for (int i = 0; i < numClients; i++)
+    {
+        data.pushTag("client",i);
+        string ip = data.getValue("ip", "127.0.0.1");
+        string name = data.getValue("objectName", "unknown");
+        addClient(name,ip);
+        data.popTag();
+    }
 }
 
 //--------------------------------------------------------------
@@ -204,4 +272,10 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+void ofApp::exit() {
+    for (int i = 0; i < clients.size(); i++) {
+        delete clients[i];
+    }
 }

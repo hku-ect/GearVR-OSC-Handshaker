@@ -1,0 +1,25 @@
+<setup></setup>
+<client>
+    <ip>10.200.200.189</ip>
+    <objectName>Yellow</objectName>
+</client>
+<client>
+    <ip>10.200.200.190</ip>
+    <objectName>Blue</objectName>
+</client>
+<client>
+    <ip>10.200.200.192</ip>
+    <objectName>Orange</objectName>
+</client>
+<client>
+    <ip>10.200.200.193</ip>
+    <objectName>Purple</objectName>
+</client>
+<client>
+    <ip>10.200.200.68</ip>
+    <objectName>Pink</objectName>
+</client>
+<client>
+    <ip>10.200.200.23</ip>
+    <objectName>Orange</objectName>
+</client>
