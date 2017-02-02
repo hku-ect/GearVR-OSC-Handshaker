@@ -15,4 +15,4 @@ If it does not find a match, it sends back on OSCMessage on <b>port 6505</b> wit
 ## Virtual Positions
 The Handshake ofxApp also serves as a hub for virtual positions of tracked objects. This links closely with the UnityOSCToolkit.
 
-Once the UnityOSCToolkit's GearVR setup succesfully handshakes, and if "vertical walking" is enabled, Unity will send "virtual gear updates" to this ofxApp, these messages are then forwarded to all other clients. They contain a 3D world position and the name of the client (so they can be matched on the other end).
+Once the UnityOSCToolkit's GearVR setup succesfully handshakes, and if "vertical walking" is enabled, Unity will send "virtual gear updates" (OSCMesssage with address "/gear-virtualpos", port <b>5150</b>) to this ofxApp, these messages are then forwarded to all other clients. They contain a 3D world position and the name of the client (so they can be matched on the other end).
